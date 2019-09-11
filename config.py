@@ -12,4 +12,5 @@ import sys
 sys.path.append('..')
 from mysetting import *
 
-headers = headers
+headers1 = headers1
+headers2 = headers2

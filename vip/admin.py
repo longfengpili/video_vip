@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-09 07:51:27
+@LastEditTime: 2019-09-11 21:45:41
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -15,26 +15,33 @@ import os
 import random
 import requests
 from bs4 import BeautifulSoup
-from config import headers
+from config import headers1, headers2
 from api_urls import work_url, notwork_url
 
 admin = Blueprint('admin',__name__)
 
+
+@admin.route('/')
 @admin.route('/index')
 def index():
     return render_template('admin/index.html')
+
 
 @admin.route('search/', methods=['GET'])
 def search():
     # print(request.headers)
     url = request.args.get('url')
     source = request.args.get('source')
-    title, all_episode = get_videolist(url,source)
-    # return redirect(url_for('admin.index', title=title, all_episode=all_episode))
-    return render_template('admin/search.html', title=title, all_episode=all_episode)
+    if re.search('www\..*?\.com', url):
+        # print(url)
+        title, all_episode = get_videolist(url,source)
+        return render_template('admin/search.html', title=title, all_episode=all_episode)
+    else:
+        print(f"40{url_for('admin.search_video',search=url, source=source)}")
+        return redirect(url_for('admin.search_video',search=url, source=source))
 
 def get_videolist(url, source=3):
-    req = requests.get(url, headers=headers)
+    req = requests.get(url, headers=headers1)
     html = req.text
     soup = BeautifulSoup(html)
     title = soup.title
@@ -60,4 +67,33 @@ def vip_pass(url, source):
             return u
 
 
-    
+@admin.route('search_video/?search=<search>', methods=['GET'])
+def search_video(search):
+    print(request.args)
+    url = request.args.get('url')
+    source = request.args.get('source')
+    if url:
+        print(f'76='*10)
+        return redirect(url_for('admin.search', url=url, source=source))
+    else:
+        url = f'https://so.iqiyi.com/so/q_{search}?source=input&sr=1006493155769'
+        req = requests.get(url, headers=headers2)
+        html = req.text
+        soup = BeautifulSoup(html)
+        searchtitle = soup.title
+        result_title = soup.find_all('h3', class_="result_title")
+        # print(searchtitle)
+        search_results = []
+        for result in result_title:
+            search = {}
+            try:
+                title = result.a['title']
+                url = result.a['href']
+                if url.endswith('search'):
+                    search['title'] = title
+                    search['url'] = url
+                    search['source'] = source
+                    search_results.append(search)
+            except:
+                pass
+        return render_template('admin/search_video.html', title=searchtitle, all_episode=search_results)
