@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-11 08:06:32
+ * @LastEditTime: 2019-09-12 08:03:53
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -13,7 +13,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% block title %}
     <title>index</title>
+    {% endblock %}
 </head>
 
 <body>
@@ -23,8 +25,11 @@
     </div>
 
     <div style="width:100%;text-align:center;">
-        <form action=""  method='GET'>
-            <input name="url" type="text" value='' placeholder='请填写对应的url' style="height: 50px;width: 500px;">
+        {% block action %}
+        <form action="search"  method='GET'>
+        {% endblock%}
+            
+            <input name="url" type="text" value='' placeholder='请填写查询的电视剧名称' style="height: 50px;width: 500px;">
             <select name="source" style="height: 50px;width: 50px;">
                 <option value="0">0</option>
                 <!-- <option value="1">1</option>
@@ -35,6 +40,7 @@
         </form>
     </div>
 
+    {% block show %}
     <div>
         <h1 align='center'>{{title}}</h1>
     {% if all_episode %}
@@ -47,13 +53,13 @@
         {% for episode in all_episode %}
             <tr>
                 <td align="center">{{episode.title}}</td>
-                <td align="center"><a href="{{url_for('admin.search', url=episode.url, source=episode.source)}}"
-                        target="_blank">clickme</a></td>
+                <td align="center"><a href="{{episode.url}}" target="_blank">clickme</a></td>
             </tr>
         {% endfor %}
         </table>
     {% endif %}
     </div>
+    {% endblock %}
 
 </body>
 

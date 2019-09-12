@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-11 21:45:41
+@LastEditTime: 2019-09-12 07:52:04
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -27,18 +27,18 @@ def index():
     return render_template('admin/index.html')
 
 
-@admin.route('search/', methods=['GET'])
-def search():
+@admin.route('show/', methods=['GET'])
+def show():
     # print(request.headers)
     url = request.args.get('url')
     source = request.args.get('source')
     if re.search('www\..*?\.com', url):
         # print(url)
         title, all_episode = get_videolist(url,source)
-        return render_template('admin/search.html', title=title, all_episode=all_episode)
+        return render_template('admin/show.html', title=title, all_episode=all_episode)
     else:
-        print(f"40{url_for('admin.search_video',search=url, source=source)}")
-        return redirect(url_for('admin.search_video',search=url, source=source))
+        print(url, source)
+        return redirect(url_for('admin.search',search=url, source=source))
 
 def get_videolist(url, source=3):
     req = requests.get(url, headers=headers1)
@@ -55,7 +55,6 @@ def get_videolist(url, source=3):
                 url = re.subn('.*?www', 'http://www', url, 1)[0]
                 episode['url'] = vip_pass(url, source)
                 episode['title'] = video.a.string.strip()
-                print(f"[{episode['title']}]{episode['url']}")
                 all_episode.append(episode)
     return title, all_episode
 
@@ -67,14 +66,12 @@ def vip_pass(url, source):
             return u
 
 
-@admin.route('search_video/?search=<search>', methods=['GET'])
-def search_video(search):
-    print(request.args)
+@admin.route('search/?search=<search>', methods=['GET'])
+def search(search):
     url = request.args.get('url')
     source = request.args.get('source')
     if url:
-        print(f'76='*10)
-        return redirect(url_for('admin.search', url=url, source=source))
+        return redirect(url_for('admin.show', url=url, source=source))
     else:
         url = f'https://so.iqiyi.com/so/q_{search}?source=input&sr=1006493155769'
         req = requests.get(url, headers=headers2)
@@ -96,4 +93,4 @@ def search_video(search):
                     search_results.append(search)
             except:
                 pass
-        return render_template('admin/search_video.html', title=searchtitle, all_episode=search_results)
+        return render_template('admin/search.html', title=searchtitle, all_episode=search_results)
