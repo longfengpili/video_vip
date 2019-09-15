@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-12 08:03:53
+ * @LastEditTime: 2019-09-16 07:57:26
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -11,6 +11,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     {% block title %}
@@ -21,14 +22,22 @@
 <body>
 
     <div style="text-align:center;">
-        <img src="{{ url_for('static',filename='admin/images/welcome.jpg')}}" style="display: inline-block;"/>
+        <img src="{{ url_for('static',filename='admin/images/welcome.jpg')}}" style="display: inline-block;" />
     </div>
+
+    {% block video %}
+        <div style="width: 100%; height: 100%;" id="player">
+            <iframe id="WANG" scrolling="no" allowtransparency="true" allowfullscreen="true" frameborder="0"
+                src="https://jx.dy-jx.com/?url=http://www.iqiyi.com/v_19rrlw6qi4.html" width="100%" height="100%"
+                style="background: #000000;"></iframe>
+        </div>
+    {% endblock %}
 
     <div style="width:100%;text-align:center;">
         {% block action %}
-        <form action="search"  method='GET'>
-        {% endblock%}
-            
+        <form action="search" method='GET'>
+            {% endblock%}
+
             <input name="url" type="text" value='' placeholder='请填写查询的电视剧名称' style="height: 50px;width: 500px;">
             <select name="source" style="height: 50px;width: 50px;">
                 <option value="0">0</option>
@@ -43,21 +52,21 @@
     {% block show %}
     <div>
         <h1 align='center'>{{title}}</h1>
-    {% if all_episode %}
-    <table border="1px" align="center" cellspacing="0" cellpadding="6" width="1148" ;>
-        <tr>
-            <th>集</th>
-            <th>链接</th>
-        </tr>
-        
-        {% for episode in all_episode %}
+        {% if all_episode %}
+        <table border="1px" align="center" cellspacing="0" cellpadding="6" width="1148" ;>
+            <tr>
+                <th>集</th>
+                <th>链接</th>
+            </tr>
+
+            {% for episode in all_episode %}
             <tr>
                 <td align="center">{{episode.title}}</td>
                 <td align="center"><a href="{{episode.url}}" target="_blank">clickme</a></td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </table>
-    {% endif %}
+        {% endif %}
     </div>
     {% endblock %}
 

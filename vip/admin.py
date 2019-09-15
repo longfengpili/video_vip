@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-12 07:52:04
+@LastEditTime: 2019-09-16 07:45:43
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -94,3 +94,17 @@ def search(search):
             except:
                 pass
         return render_template('admin/search.html', title=searchtitle, all_episode=search_results)
+
+
+@admin.route('video/', methods=['GET'])
+def video():
+    # print(request.headers)
+    url = request.args.get('url')
+    source = request.args.get('source')
+    if re.search('www\..*?\.com', url):
+        print(url)
+        # title, all_episode = get_videolist(url, source)
+        return render_template('admin/video.html', video_url=url)
+    # else:
+    #     print(url, source)
+    #     return redirect(url_for('admin.search', search=url, source=source))

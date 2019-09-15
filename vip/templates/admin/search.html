@@ -11,6 +11,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     {% block title %}
@@ -21,30 +22,30 @@
 <body>
     <div style="width:100%;text-align:center;">
         {% block action %}
-        <form action=""  method='GET'>
-        {% endblock%}
+        <form action="" method='GET'>
+            {% endblock%}
         </form>
     </div>
 
     {% block show %}
     <div>
         <h1 align='center'>{{title}}</h1>
-    {% if all_episode %}
-    <table border="1px" align="center" cellspacing="0" cellpadding="6" width="1148" ;>
-        <tr>
-            <th>集</th>
-            <th>链接</th>
-        </tr>
-        
-        {% for episode in all_episode %}
+        {% if all_episode %}
+        <table border="1px" align="center" cellspacing="0" cellpadding="6" width="1148" ;>
+            <tr>
+                <th>集</th>
+                <th>链接</th>
+            </tr>
+
+            {% for episode in all_episode %}
             <tr>
                 <td align="center">{{episode.title}}</td>
                 <td align="center"><a href="{{url_for('admin.show', url=episode.url, source=episode.source)}}"
                         target="_blank">clickme</a></td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </table>
-    {% endif %}
+        {% endif %}
     </div>
     {% endblock %}
 
