@@ -61,7 +61,7 @@ def get_videolist(url, source=3):
                 episode['title'] = video.a.string.strip()
                 try:
                     episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
-                else:
+                except:
                     episode['num'] = 0
                 episode['source'] = source
                 all_episode.append(episode)
