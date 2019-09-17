@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-17 08:07:10
+@LastEditTime: 2019-09-17 08:10:08
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -60,6 +60,7 @@ def get_videolist(url, source=3):
                 episode['url'] = vip_pass(url_, source)
                 episode['title'] = video.a.string.strip()
                 episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
+                episode['source'] = source
                 all_episode.append(episode)
         
     return title, all_episode
