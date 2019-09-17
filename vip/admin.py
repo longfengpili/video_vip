@@ -93,11 +93,11 @@ def search(search):
             try:
                 title = result.a['title']
                 url = result.a['href']
-                if url.endswith('search'):
-                    search['title'] = title
-                    search['url'] = url
-                    search['source'] = source
-                    search_results.append(search)
+                # if url.endswith('search'): #后面考虑 暂时去掉
+                search['title'] = title
+                search['url'] = url
+                search['source'] = source
+                search_results.append(search)
             except:
                 pass
         return render_template('admin/search.html', title=searchtitle, all_episode=search_results)
