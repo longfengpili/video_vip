@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-16 07:45:43
+@LastEditTime: 2019-09-17 08:07:10
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -32,12 +32,15 @@ def show():
     # print(request.headers)
     url = request.args.get('url')
     source = request.args.get('source')
+    main = request.args.get('main')
+    main = main if main else url
+    print(f'==================url: {url}, main:{main}, source:{source}')
     if re.search('www\..*?\.com', url):
-        # print(url)
-        title, all_episode = get_videolist(url,source)
-        return render_template('admin/show.html', title=title, all_episode=all_episode)
+        title, all_episode = get_videolist(main,source)
+        print(all_episode)
+        return render_template('admin/show.html', title=title, all_episode=all_episode, video_url=url)
     else:
-        print(url, source)
+        
         return redirect(url_for('admin.search',search=url, source=source))
 
 def get_videolist(url, source=3):
@@ -50,12 +53,15 @@ def get_videolist(url, source=3):
     for video in videos:
         episode = {}
         if 'sub1' in video.a['rseat']:
-            url = video.a['href'].strip()
-            if 'iqiyi.com/v_' in url:
+            url_ = video.a['href'].strip()
+            if 'iqiyi.com/v_' in url_:
                 url = re.subn('.*?www', 'http://www', url, 1)[0]
-                episode['url'] = vip_pass(url, source)
+                episode['main'] = url
+                episode['url'] = vip_pass(url_, source)
                 episode['title'] = video.a.string.strip()
+                episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
                 all_episode.append(episode)
+        
     return title, all_episode
 
 
@@ -102,9 +108,7 @@ def video():
     url = request.args.get('url')
     source = request.args.get('source')
     if re.search('www\..*?\.com', url):
-        print(url)
-        # title, all_episode = get_videolist(url, source)
         return render_template('admin/video.html', video_url=url)
-    # else:
-    #     print(url, source)
-    #     return redirect(url_for('admin.search', search=url, source=source))
+    else:
+        print(url, source)
+        return redirect(url_for('admin.search', search=url, source=source))
