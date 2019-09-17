@@ -59,7 +59,10 @@ def get_videolist(url, source=3):
                 episode['main'] = url
                 episode['url'] = vip_pass(url_, source)
                 episode['title'] = video.a.string.strip()
-                episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
+                try:
+                    episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
+                else:
+                    episode['num'] = 0
                 episode['source'] = source
                 all_episode.append(episode)
         
