@@ -80,7 +80,7 @@ def search(search):
     if url:
         return redirect(url_for('admin.show', url=url, source=source))
     else:
-        url = f'https://so.iqiyi.com/so/q_{search}?source=input&sr=1006493155769'
+        url = f'https://so.iqiyi.com/so/q_{search}?'
         req = requests.get(url, headers=headers2)
         html = req.text
         soup = BeautifulSoup(html)
