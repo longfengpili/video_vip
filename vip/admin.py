@@ -59,7 +59,10 @@ def get_videolist(url, source=3):
                 episode['main'] = url
                 episode['url'] = vip_pass(url_, source)
                 episode['title'] = video.a.string.strip()
-                episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
+                try:
+                    episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
+                except:
+                    episode['num'] = 0
                 episode['source'] = source
                 all_episode.append(episode)
         
@@ -80,7 +83,11 @@ def search(search):
     if url:
         return redirect(url_for('admin.show', url=url, source=source))
     else:
+<<<<<<< HEAD
         url = f'https://so.iqiyi.com/so/q_{search}'
+=======
+        url = f'https://so.iqiyi.com/so/q_{search}?'
+>>>>>>> b882e399136eaa5bdcca4d3c18ebc38d520e1bac
         req = requests.get(url, headers=headers2)
         html = req.text
         soup = BeautifulSoup(html)
@@ -93,7 +100,7 @@ def search(search):
             try:
                 title = result.a['title']
                 url = result.a['href']
-                if url.endswith('search'):
+                if url.endswith('search'): #后面考虑 暂时去掉
                     search['title'] = title
                     search['url'] = url
                     search['source'] = source

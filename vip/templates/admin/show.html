@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-17 08:08:57
+ * @LastEditTime: 2019-09-18 08:01:18
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -45,7 +45,7 @@
             {% for episode in all_episode %}
             <tr>
                 <td align="center">{{episode.title}}</td>
-                <td align="center"><a href="{{url_for('admin.show', url=episode.url, main=episode.main, source=episode.source)}}" target="_blank">clickme</a>
+                <td align="center"><a href="{{url_for('admin.show', url=episode.url, main=episode.main, source=episode.source)}}">clickme</a>
                 </td>
             </tr>
             {% endfor %}
