@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-18 07:47:50
+@LastEditTime: 2019-09-18 13:26:38
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -83,11 +83,7 @@ def search(search):
     if url:
         return redirect(url_for('admin.show', url=url, source=source))
     else:
-<<<<<<< HEAD
-        url = f'https://so.iqiyi.com/so/q_{search}'
-=======
         url = f'https://so.iqiyi.com/so/q_{search}?'
->>>>>>> b882e399136eaa5bdcca4d3c18ebc38d520e1bac
         req = requests.get(url, headers=headers2)
         html = req.text
         soup = BeautifulSoup(html)

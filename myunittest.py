@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:53:49
-@LastEditTime: 2019-09-18 07:59:41
+@LastEditTime: 2019-09-18 13:49:33
 @github: https://github.com/longfengpili
 '''
 
@@ -23,10 +23,9 @@ class tasktest(unittest.TestCase):
 
     def test_iqiyi(self):
         search = '废柴'
-        url = f'https://so.iqiyi.com/so/q_{search}'
-        iqy = Iqiyi(url=url, headers=headers2)
-        soup = iqy.get_html_from_iqiyi()
-        print(soup)
+        iqy = Iqiyi(headers=headers2, search=search)
+        episodes = iqy.get_search()
+        print(episodes)
 
 if __name__ == '__main__':
     # unittest.main()

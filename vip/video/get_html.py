@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:28:59
-@LastEditTime: 2019-09-18 07:58:39
+@LastEditTime: 2019-09-18 13:29:40
 @github: https://github.com/longfengpili
 '''
 
@@ -25,7 +25,7 @@ class GetResponseBase(object):
         return self.html
 
     def soup_html(self):
-        soup = BeautifulSoup(self.html)
+        soup = BeautifulSoup(self.html, "lxml")
         return soup
 
     def main_base(self):
