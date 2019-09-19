@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-18 13:51:50
+@LastEditTime: 2019-09-19 08:04:37
 @github: https://github.com/longfengpili
 '''
 
@@ -15,7 +15,7 @@ import re
 
 
 class Iqiyi(GetResponseBase):
-    def __init__(self, headers, search):
+    def __init__(self, headers, search=None):
         self.search = search
         self.url = f'https://so.iqiyi.com/so/q_{search}'
         super(Iqiyi, self).__init__(self.url, headers)
@@ -30,35 +30,40 @@ class Iqiyi(GetResponseBase):
         #     f.write(str(soup))
         title = soup.title
         results = soup.find_all('h3', class_="result_title")
+        search_results = []
+        for result in results:
+            search_result = {}
+            if 'title' in str(result.a):
+                search_result['src'] = self.url
+                search_result['title'] = result.a['title']
+                search_result['url'] = result.a['href']
+                print(result.a['title'], result.a['href'])
+                search_results.append(search_result)
+        return title, search_results
+
+    def get_video(self, video_url):
+        soup = self.main_base(video_url)
+        title = soup.head.title.string
+        if '综艺' in title:
+            results = soup.find_all('a', class_="recoAlbumTit-link") #综艺
+        elif '电影' in title:
+            results = soup.find_all('a', class_="albumPlayBtn") #电影
+        elif '电视剧' in title:
+            # return soup
+            results = soup.find_all('a', class_="plotNum") #电视剧
         episodes = []
         for result in results:
             episode = {}
-            if 'title' in str(result.a) and self.search in result.a['title']:
-                episode['src'] = self.url
-                episode['title'] = result.a['title']
-                episode['url'] = result.a['href']
+            episode['title'] = result['title']
+            episode['title_s'] = result.string
+            episode['url'] = result['href']
+            if 'iqiyi.com' in episode['url']:
                 episodes.append(episode)
         return title, episodes
 
 
 
 
-        # print(videos)
-        # all_episode = []
-        # for video in videos:
-        #     print(video)
-        #     episode = {}
-        #     if 'sub1' in video.a['rseat']:
-        #         url_single = video.a['href'].strip()
-        #         if 'iqiyi.com/v_' in url_single:
-        #             url_single = re.subn('.*?www', 'http://www', url_single, 1)[0]
-        #             episode['src'] = self.url
-        #             episode['url'] = url_single
-        #             episode['title'] = video.a.string.strip()
-        #             try:
-        #                 episode['num'] = re.findall('第(\d+)集', video.a.string.strip())[0]
-        #             except:
-        #                 episode['num'] = 0
-        #             all_episode.append(episode)
-        # return title, all_episode
+
+
 
