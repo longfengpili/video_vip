@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-19 08:04:37
+@LastEditTime: 2019-09-19 13:58:17
 @github: https://github.com/longfengpili
 '''
 
@@ -9,7 +9,6 @@
 #-*- coding:utf-8 -*-
 
 from .get_html import GetResponseBase
-from config import headers1
 from bs4 import BeautifulSoup
 import re
 
@@ -26,9 +25,12 @@ class Iqiyi(GetResponseBase):
 
     def get_search(self):
         soup = self.get_html_from_iqiyi()
-        # with open('./test.csv', 'w', encoding='utf-8') as f:
-        #     f.write(str(soup))
         title = soup.title
+        while not title or '404' in title.string:
+            print(title)
+            soup = self.get_html_from_iqiyi()
+            title = soup.title
+        title = title.string
         results = soup.find_all('h3', class_="result_title")
         search_results = []
         for result in results:
@@ -43,20 +45,25 @@ class Iqiyi(GetResponseBase):
 
     def get_video(self, video_url):
         soup = self.main_base(video_url)
-        title = soup.head.title.string
+        title = soup.head.title
+        while not title:
+            print(title)
+            soup = self.main_base(video_url)
+            title = soup.head.title
+        title = title.string
         if '综艺' in title:
-            results = soup.find_all('a', class_="recoAlbumTit-link") #综艺
+            results = soup.find_all('a', class_="stageNum")  # 综艺 #未解决第二页
         elif '电影' in title:
             results = soup.find_all('a', class_="albumPlayBtn") #电影
         elif '电视剧' in title:
-            # return soup
             results = soup.find_all('a', class_="plotNum") #电视剧
         episodes = []
         for result in results:
             episode = {}
             episode['title'] = result['title']
-            episode['title_s'] = result.string
-            episode['url'] = result['href']
+            episode['title_s'] = result.string.strip()
+            episode['url'] = re.subn('.*?www', 'http://www', result['href'], 1)[0]
+            print(episode)
             if 'iqiyi.com' in episode['url']:
                 episodes.append(episode)
         return title, episodes

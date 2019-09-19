@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-18 13:26:38
+@LastEditTime: 2019-09-19 13:56:35
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -15,8 +15,9 @@ import os
 import random
 import requests
 from bs4 import BeautifulSoup
-from config import headers1, headers2
+from config import headers_video, headers_search
 from api_urls import work_url, notwork_url
+from .video import Iqiyi
 
 admin = Blueprint('admin',__name__)
 
@@ -76,34 +77,14 @@ def vip_pass(url, source):
             return u
 
 
-@admin.route('search/?search=<search>', methods=['GET'])
-def search(search):
-    url = request.args.get('url')
+@admin.route('search/', methods=['GET'])
+def search():
+    search = request.args.get('search')
     source = request.args.get('source')
-    if url:
-        return redirect(url_for('admin.show', url=url, source=source))
-    else:
-        url = f'https://so.iqiyi.com/so/q_{search}?'
-        req = requests.get(url, headers=headers2)
-        html = req.text
-        soup = BeautifulSoup(html)
-        searchtitle = soup.title
-        result_title = soup.find_all('h3', class_="result_title")
-        # print(searchtitle)
-        search_results = []
-        for result in result_title:
-            search = {}
-            try:
-                title = result.a['title']
-                url = result.a['href']
-                if url.endswith('search'): #后面考虑 暂时去掉
-                    search['title'] = title
-                    search['url'] = url
-                    search['source'] = source
-                    search_results.append(search)
-            except:
-                pass
-        return render_template('admin/search.html', title=searchtitle, all_episode=search_results)
+    iqy = Iqiyi(headers_search, search=search)
+    title, search_results = iqy.get_search()
+    print(title)
+    return render_template('admin/search.html', title=title, all_episode=search_results)
 
 
 @admin.route('video/', methods=['GET'])

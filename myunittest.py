@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:53:49
-@LastEditTime: 2019-09-19 07:58:55
+@LastEditTime: 2019-09-19 13:56:55
 @github: https://github.com/longfengpili
 '''
 
@@ -10,7 +10,7 @@
 
 import unittest
 from vip.video.iqiyi import Iqiyi
-from config import headers1, headers2
+from config import headers_video, headers_search
 
 
 class tasktest(unittest.TestCase):
@@ -22,18 +22,16 @@ class tasktest(unittest.TestCase):
         print(f'tearDown...')
 
     def test_iqiyi_search(self):
-        search = '蝙蝠侠'
-        iqy = Iqiyi(headers=headers2, search=search)
+        search = '坑王'
+        iqy = Iqiyi(headers=headers_search, search=search)
         episodes = iqy.get_search()
         print(episodes)
 
     def test_iqiyi_video(self):
-        video_url = 'http://www.iqiyi.com/lib/m_212716614.html?src=search'
-        iqy = Iqiyi(headers=headers1)
+        video_url = 'http://www.iqiyi.com/a_19rrh3kj85.html'
+        iqy = Iqiyi(headers=headers_video)
         soup = iqy.get_video(video_url)
         print(soup)
-        with open('./test.csv', 'w', encoding='utf-8') as f:
-            f.write(str(soup))
 
 if __name__ == '__main__':
     # unittest.main()
