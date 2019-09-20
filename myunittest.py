@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:53:49
-@LastEditTime: 2019-09-19 13:56:55
+@LastEditTime: 2019-09-20 07:19:27
 @github: https://github.com/longfengpili
 '''
 
@@ -23,13 +23,13 @@ class tasktest(unittest.TestCase):
 
     def test_iqiyi_search(self):
         search = '坑王'
-        iqy = Iqiyi(headers=headers_search, search=search)
+        iqy = Iqiyi(headers=headers_search, search=search, api_id=0)
         episodes = iqy.get_search()
         print(episodes)
 
     def test_iqiyi_video(self):
         video_url = 'http://www.iqiyi.com/a_19rrh3kj85.html'
-        iqy = Iqiyi(headers=headers_video)
+        iqy = Iqiyi(headers=headers_video, api_id=0)
         soup = iqy.get_video(video_url)
         print(soup)
 

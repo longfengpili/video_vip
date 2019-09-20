@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-19 13:45:15
+ * @LastEditTime: 2019-09-20 07:32:20
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -33,7 +33,7 @@
             {% endblock%}
 
             <input name="search" type="text" value='' placeholder='请填写查询的电视剧名称' style="height: 50px;width: 500px;">
-            <select name="source" style="height: 50px;width: 50px;">
+            <select name="api_id" style="height: 50px;width: 50px;">
                 <option value="0">0</option>
                 <!-- <option value="1">1</option>
                 <option value="2">2</option>
@@ -44,12 +44,10 @@
     </div>
 
     {% block video %}
-
         <div style="width: 100%; height: 100%;" id="player" align="center">
             <iframe id="video" scrolling="no" allowtransparency="true" allowfullscreen="true" frameborder="0"
                 src="{{video_url}}" width="640" height="480" align='center' style="background: #000000;"></iframe>
         </div>
-
     {% endblock %}
 
     {% block show %}

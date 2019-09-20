@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-18 08:01:18
+ * @LastEditTime: 2019-09-20 08:00:26
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -35,17 +35,17 @@
 
     {% block show %}
     <div>
-        {% if all_episode %}
+        {% if episodes %}
         <table border="1px" align="center" cellspacing="0" cellpadding="6" width="1148" ;>
             <tr>
                 <th>集</th>
                 <th>链接</th>
             </tr>
 
-            {% for episode in all_episode %}
+            {% for episode in episodes %}
             <tr>
                 <td align="center">{{episode.title}}</td>
-                <td align="center"><a href="{{url_for('admin.show', url=episode.url, main=episode.main, source=episode.source)}}">clickme</a>
+                <td align="center"><a href="{{url_for('admin.show', url=episode.url, src=episode.src, api_id=episode.api_id)}}">clickme</a>
                 </td>
             </tr>
             {% endfor %}

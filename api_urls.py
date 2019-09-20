@@ -1,14 +1,14 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 12:38:25
-@LastEditTime: 2019-09-10 07:29:01
+@LastEditTime: 2019-09-20 06:49:46
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 @github: https://github.com/longfengpili
 '''
 
-work_url = {
+api_urls = {
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
