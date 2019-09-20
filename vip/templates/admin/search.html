@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-20 07:58:27
+ * @LastEditTime: 2019-09-20 13:10:46
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -45,7 +45,7 @@
             <tr>
                 <td align="center">{{episode.title}}</td>
                 <td align="center"><a
-                        href="{{url_for('admin.show', url=episode.url, api_id=episode.api_id)}}"
+                        href="{{url_for('admin.show', url=episode.url, api_id=episode.api_id, title=episode.title)}}"
                         target="_blank">clickme</a></td>
             </tr>
             {% endfor %}

@@ -2,3 +2,5 @@ logs/
 *.pyc
 *.ipynb
 *.csv
+.vscode/
+__pycache__/

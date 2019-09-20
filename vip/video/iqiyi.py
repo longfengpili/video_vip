@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-20 08:04:42
+@LastEditTime: 2019-09-20 13:29:29
 @github: https://github.com/longfengpili
 '''
 
@@ -42,7 +42,8 @@ class Iqiyi(GetResponseBase):
                 search_result['api_id'] = self.api_id
                 search_result['title'] = result.a['title']
                 search_result['url'] = result.a['href']
-                search_results.append(search_result)
+                if search_result not in search_results:
+                    search_results.append(search_result)
         return title, search_results
     
     def url_api(self, url, api_id):
@@ -55,11 +56,11 @@ class Iqiyi(GetResponseBase):
         soup = self.main_base(video_url)
         title = soup.head.title
         while not title or '404' in title.string:
-            print(title)
             soup = self.main_base(video_url)
             title = soup.head.title
+        # with open('./test.csv', 'w' ,encoding='utf-8') as f:
+        #     f.write(str(soup))
         title = title.string
-        print(title)
         if '综艺' in title:
             results = soup.find_all('a', class_="stageNum")  # 综艺 #未解决第二页
         elif '电影' in title:
@@ -75,8 +76,8 @@ class Iqiyi(GetResponseBase):
             # episode['title_s'] = result.string.strip()
             url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
             episode['url'] = self.url_api(url, self.api_id)
-            print(episode)
-            if 'iqiyi.com' in episode['url']:
+            if 'iqiyi.com' in episode['url'] and episode not in episodes:
+                print(episode)
                 episodes.append(episode)
         return title, episodes
 
