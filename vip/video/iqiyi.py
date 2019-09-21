@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-21 21:54:03
+@LastEditTime: 2019-09-21 21:59:21
 @github: https://github.com/longfengpili
 '''
 
@@ -107,6 +107,8 @@ class Iqiyi(GetResponseBase):
             results = soup.find_all('a', class_="albumPlayBtn") #电影
         elif '电视剧' in title:
             results = soup.find_all('a', class_="plotNum") #电视剧
+        else:
+            results = []
         if not episodes:
             for result in results:
                 episode = {}
