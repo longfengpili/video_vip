@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-21 19:31:25
+@LastEditTime: 2019-09-21 19:38:42
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -32,7 +32,7 @@ def index():
 def show():
     # print(request.headers)
     url = request.args.get('url')
-    p_status = False if 'api' in url else True
+    p_status = False if url and 'api' in url else True
     title = request.args.get('title')
     src = request.args.get('src')
     api_id = request.args.get('api_id')
