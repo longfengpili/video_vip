@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-21 19:29:25
+@LastEditTime: 2019-09-21 19:35:58
 @github: https://github.com/longfengpili
 '''
 
@@ -89,6 +89,7 @@ class Iqiyi(GetResponseBase):
 
     def get_video(self, video_url, p_status):
         k = 0
+        episodes = []
         soup = self.get_response_soup(url=video_url)
         title = soup.head.title
         while (not title or '404' in title.string) and k <= 5:
@@ -106,7 +107,6 @@ class Iqiyi(GetResponseBase):
         elif '电视剧' in title:
             results = soup.find_all('a', class_="plotNum") #电视剧
         if not episodes:
-            episodes = []
             for result in results:
                 episode = {}
                 episode['src'] = video_url
