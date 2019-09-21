@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-21 19:35:58
+@LastEditTime: 2019-09-21 21:54:03
 @github: https://github.com/longfengpili
 '''
 
@@ -44,6 +44,7 @@ class Iqiyi(GetResponseBase):
                 search_result['title'] = result.a['title']
                 search_result['url'] = result.a['href']
                 if search_result not in search_results:
+                    print(search_result)
                     search_results.append(search_result)
         return title, search_results
     
