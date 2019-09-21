@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-21 18:37:47
+@LastEditTime: 2019-09-21 19:29:25
 @github: https://github.com/longfengpili
 '''
 
@@ -53,7 +53,7 @@ class Iqiyi(GetResponseBase):
                 url_api = api + url
                 return url_api
 
-    def get_video_variety(self, video_url, soup):
+    def get_video_variety(self, video_url, soup, p_status):
         source_id = soup.find_all('span', class_="effect-score")
         if source_id:
             source_id = source_id[0]['data-score-tvid']
@@ -64,7 +64,7 @@ class Iqiyi(GetResponseBase):
         episodes = []
         if source_id and album_list:
             for date in album_list:
-                print(date)
+                # print(date)
                 url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
                 headers= {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0'
@@ -82,11 +82,12 @@ class Iqiyi(GetResponseBase):
                         url = result['playUrl']
                         episode['url'] = self.url_api(url, self.api_id)
                         if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                            print(episode)
-                            episodes.append(episode)
+                            if p_status:
+                                print(episode)
+                            episodes.insert(0, episode)
         return episodes
 
-    def get_video(self, video_url):
+    def get_video(self, video_url, p_status):
         k = 0
         soup = self.get_response_soup(url=video_url)
         title = soup.head.title
@@ -98,24 +99,24 @@ class Iqiyi(GetResponseBase):
         #     f.write(str(soup))
         title = title.string
         if '综艺' in title:
-            episodes = self.get_video_variety(video_url, soup)
-            return title, episodes
+            results = soup.find_all('a', class_="stageNum")
+            episodes = self.get_video_variety(video_url, soup, p_status)
         elif '电影' in title:
             results = soup.find_all('a', class_="albumPlayBtn") #电影
         elif '电视剧' in title:
             results = soup.find_all('a', class_="plotNum") #电视剧
-        episodes = []
-        for result in results:
-            episode = {}
-            episode['src'] = video_url
-            episode['api_id'] = self.api_id
-            episode['title'] = result['title']
-            # episode['title_s'] = result.string.strip()
-            url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
-            episode['url'] = self.url_api(url, self.api_id)
-            if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                print(episode)
-                episodes.append(episode)
+        if not episodes:
+            episodes = []
+            for result in results:
+                episode = {}
+                episode['src'] = video_url
+                episode['api_id'] = self.api_id
+                episode['title'] = result['title']
+                # episode['title_s'] = result.string.strip()
+                url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
+                episode['url'] = self.url_api(url, self.api_id)
+                if 'iqiyi.com' in episode['url'] and episode not in episodes:
+                    episodes.append(episode)
         return title, episodes
 
 

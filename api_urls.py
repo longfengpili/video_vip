@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 12:38:25
-@LastEditTime: 2019-09-20 06:49:46
+@LastEditTime: 2019-09-21 19:10:38
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -9,6 +9,7 @@
 '''
 
 api_urls = {
+    "http://api.yingxiangbao.cn/?url=": "2019-09-21 19:10:28",
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
     "http://api.drgxj.com/?url=": "2019-09-10 07:26:29",
