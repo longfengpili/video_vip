@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-22 13:59:37
+@LastEditTime: 2019-09-23 07:56:28
 @github: https://github.com/longfengpili
 '''
 
@@ -64,8 +64,8 @@ class Iqiyi(GetResponseBase):
         else:
             date_upload = soup.head.find_all('meta', attrs={'itemprop': 'uploadDate'})[0]['content'][:4]
             date_published = soup.head.find_all('meta', attrs={'itemprop': 'datePublished'})[0]['content'][:4]
-            album_list = set([date_upload, date_published])
-        # print(source_id, album_list)
+            album_list = [str(year) for year in range(int(date_upload), int(date_published)+1, 1)]
+        print(album_list)
         
         episodes = []
         if source_id and album_list:
@@ -88,8 +88,8 @@ class Iqiyi(GetResponseBase):
                         url = result['playUrl']
                         episode['url'] = self.url_api(url, self.api_id)
                         if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                            if p_status:
-                                print(episode)
+                            # if p_status:
+                                # print(episode)
                             episodes.insert(0, episode)
         return episodes
 
