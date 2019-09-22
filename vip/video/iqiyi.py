@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-22 07:04:04
+@LastEditTime: 2019-09-22 13:59:37
 @github: https://github.com/longfengpili
 '''
 
@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 import re
 from api_urls import api_urls
 import json
+import datetime
 
 
 class Iqiyi(GetResponseBase):
@@ -30,7 +31,6 @@ class Iqiyi(GetResponseBase):
         soup = self.get_html_from_iqiyi()
         title = soup.title
         while not title or '404' in title.string:
-            print(title)
             soup = self.get_html_from_iqiyi()
             title = soup.title
         title = title.string
@@ -61,7 +61,12 @@ class Iqiyi(GetResponseBase):
         album_list = soup.find_all('li', attrs={'data-tab-title':'widget-tab-1'})
         if album_list:
             album_list = [i['data-year'] for i in album_list if i['data-year'] != 'all']
-
+        else:
+            date_upload = soup.head.find_all('meta', attrs={'itemprop': 'uploadDate'})[0]['content'][:4]
+            date_published = soup.head.find_all('meta', attrs={'itemprop': 'datePublished'})[0]['content'][:4]
+            album_list = set([date_upload, date_published])
+        # print(source_id, album_list)
+        
         episodes = []
         if source_id and album_list:
             for date in album_list:
