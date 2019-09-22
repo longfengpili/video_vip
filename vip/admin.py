@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-21 19:38:42
+@LastEditTime: 2019-09-22 07:26:15
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -32,7 +32,7 @@ def index():
 def show():
     # print(request.headers)
     url = request.args.get('url')
-    p_status = False if url and 'api' in url else True
+    p_status = False if url and 'api' in url else True #是否打印
     title = request.args.get('title')
     src = request.args.get('src')
     api_id = request.args.get('api_id')
@@ -43,6 +43,8 @@ def show():
         iqy = Iqiyi(headers=headers_video, api_id=api_id)
         title_, episodes = iqy.get_video(src, p_status)
         title = title if title else title_
+        if url == src: #首次search 不显示
+            url = None
         return render_template('admin/show.html', title=title, episodes=episodes, video_url=url)
     else:
         return redirect(url_for('admin.search',search=search, api_id=api_id))

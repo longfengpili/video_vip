@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-21 21:59:21
+@LastEditTime: 2019-09-22 07:04:04
 @github: https://github.com/longfengpili
 '''
 
@@ -108,14 +108,13 @@ class Iqiyi(GetResponseBase):
         elif '电视剧' in title:
             results = soup.find_all('a', class_="plotNum") #电视剧
         else:
-            results = []
+            results = [{'title': title, 'href': video_url}]
         if not episodes:
             for result in results:
                 episode = {}
                 episode['src'] = video_url
                 episode['api_id'] = self.api_id
                 episode['title'] = result['title']
-                # episode['title_s'] = result.string.strip()
                 url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
                 episode['url'] = self.url_api(url, self.api_id)
                 if 'iqiyi.com' in episode['url'] and episode not in episodes:

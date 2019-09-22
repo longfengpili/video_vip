@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-21 18:57:00
+ * @LastEditTime: 2019-09-22 08:11:25
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -46,7 +46,8 @@
                 <td align="center">{{episode.title}}</td>
                 <td align="center"><a
                         href="{{url_for('admin.show', url=episode.url, api_id=episode.api_id, title=episode.title)}}"
-                        target="_blank">clickme</a></td>
+                        target="_blank"><img border="0" src="{{ url_for('static',filename='admin/images/play.png')}}"
+                            alt="play" width="60" height="30" align="middle"></a></td>
             </tr>
             {% endfor %}
         </table>
