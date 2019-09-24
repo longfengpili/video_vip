@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-24 13:50:59
+@LastEditTime: 2019-09-25 07:50:01
 @github: https://github.com/longfengpili
 '''
 
@@ -47,7 +47,7 @@ class Iqiyi(GetResponseBase):
                 search_result['api_id'] = self.api_id
                 search_result['title'] = result.a['title']
                 search_result['url'] = result.a['href']
-                if search_result not in search_results:
+                if search_result not in search_results and '<em' in str(result):
                     iqylogger.info(search_result)
                     search_results.append(search_result)
         return title, search_results
@@ -78,7 +78,7 @@ class Iqiyi(GetResponseBase):
                 album_list = [str(year) for year in range(int(date_upload), int(date_published)+1, 1)]
             except:
                 album_list = []
-        iqylogger.info(album_list)
+        iqylogger.info(f'source_id: {source_id}, album_list: {album_list}')
         
         episodes = []
         if source_id and album_list:
@@ -102,7 +102,7 @@ class Iqiyi(GetResponseBase):
                         episode = {}
                         episode['src'] = video_url
                         episode['api_id'] = self.api_id
-                        episode['title'] = result['name']
+                        episode['title'] = result['shortTitle']
                         url = result['playUrl']
                         episode['url'] = self.url_api(url, self.api_id)
                         if 'iqiyi.com' in episode['url'] and episode not in episodes:
