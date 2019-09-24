@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-24 08:07:42
+@LastEditTime: 2019-09-24 13:50:59
 @github: https://github.com/longfengpili
 '''
 
@@ -15,6 +15,10 @@ from api_urls import api_urls
 import json
 import datetime
 
+import logging
+from logging import config
+config.fileConfig('vip_log.conf')
+iqylogger = logging.getLogger('iqy')
 
 class Iqiyi(GetResponseBase):
     def __init__(self, headers, api_id, search=None):
@@ -44,7 +48,7 @@ class Iqiyi(GetResponseBase):
                 search_result['title'] = result.a['title']
                 search_result['url'] = result.a['href']
                 if search_result not in search_results:
-                    print(search_result)
+                    iqylogger.info(search_result)
                     search_results.append(search_result)
         return title, search_results
     
@@ -55,23 +59,33 @@ class Iqiyi(GetResponseBase):
                 return url_api
 
     def get_video_variety(self, video_url, soup, p_status):
-        source_id = soup.find_all('span', class_="effect-score")
-        if source_id:
-            source_id = source_id[0]['data-score-tvid']
+        scripts = soup.head.find_all('script')
+        script = ''.join([script.string.replace('\n', '').replace(' ', '') for script in scripts if script.string])
+        ids = re.findall('albumId:"(.*?)",tvId:"(.*?)",sourceId:(.*?),', script)
+        if ids:
+            album_id, tv_id, source_id = ids[0]
+        else:
+            source_id = 0
+        # iqylogger.info(source_id)
+           
         album_list = soup.find_all('li', attrs={'data-tab-title':'widget-tab-1'})
         if album_list:
-            album_list = [i['data-year'] for i in album_list if i['data-year'] != 'all']
+            album_list = [i['data-year'] for i in album_list if 'data-year' in str(i) and i['data-year'] != 'all']
         else:
-            date_upload = soup.head.find_all('meta', attrs={'itemprop': 'uploadDate'})[0]['content'][:4]
-            date_published = soup.head.find_all('meta', attrs={'itemprop': 'datePublished'})[0]['content'][:4]
-            album_list = [str(year) for year in range(int(date_upload), int(date_published)+1, 1)]
-        # print(album_list)
+            try:
+                date_upload = soup.head.find_all('meta', attrs={'itemprop': 'uploadDate'})[0]['content'][:4]
+                date_published = soup.head.find_all('meta', attrs={'itemprop': 'datePublished'})[0]['content'][:4]
+                album_list = [str(year) for year in range(int(date_upload), int(date_published)+1, 1)]
+            except:
+                album_list = []
+        iqylogger.info(album_list)
         
         episodes = []
         if source_id and album_list:
             for date in album_list:
-                # print(date)
+                # iqylogger.info(date)
                 url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
+                iqylogger.info(url)
                 headers= {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0'
                 }
@@ -79,7 +93,11 @@ class Iqiyi(GetResponseBase):
                 if response:
                     response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
                     response_json = json.loads(response)
-                    results = response_json['data'].get(date)
+                    try:
+                        results = response_json['data'].get(date)
+                    except Exception as e:
+                        iqylogger.info(f'pcw-api error :{response_json}')
+                        results = []
                     for result in results:
                         episode = {}
                         episode['src'] = video_url
@@ -89,7 +107,7 @@ class Iqiyi(GetResponseBase):
                         episode['url'] = self.url_api(url, self.api_id)
                         if 'iqiyi.com' in episode['url'] and episode not in episodes:
                             if p_status:
-                                print(episode)
+                                iqylogger.info(episode)
                             episodes.insert(0, episode)
         return episodes
 
@@ -105,8 +123,7 @@ class Iqiyi(GetResponseBase):
         with open('./test.csv', 'w' ,encoding='utf-8') as f:
             f.write(str(soup))
         title = title.string
-        print(title)
-        print(soup.head.find_all('script'))
+        iqylogger.info(title)
         if '综艺' in title:
             results = soup.find_all('a', class_="stageNum")
             episodes = self.get_video_variety(video_url, soup, p_status)
@@ -114,17 +131,21 @@ class Iqiyi(GetResponseBase):
             results = soup.find_all('a', class_="albumPlayBtn") #电影
         elif '电视剧' in title:
             results = soup.find_all('a', class_="plotNum") #电视剧
+            episodes = self.get_video_variety(video_url, soup, p_status)
         else:
             results = [{'title': title, 'href': video_url}]
+            episodes = self.get_video_variety(video_url, soup, p_status)
         if not episodes:
             for result in results:
+                # iqylogger.info(result)
                 episode = {}
                 episode['src'] = video_url
                 episode['api_id'] = self.api_id
-                episode['title'] = result['title']
+                episode['title'] = result['title'] if 'title' in result else result.string if result.string else title
                 url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
                 episode['url'] = self.url_api(url, self.api_id)
                 if 'iqiyi.com' in episode['url'] and episode not in episodes:
+                    iqylogger.info(episode)
                     episodes.append(episode)
         return title, episodes
 
