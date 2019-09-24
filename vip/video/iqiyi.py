@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-23 07:58:53
+@LastEditTime: 2019-09-24 08:07:42
 @github: https://github.com/longfengpili
 '''
 
@@ -102,9 +102,11 @@ class Iqiyi(GetResponseBase):
             soup = self.get_response_soup(url=video_url)
             title = soup.head.title
             k += 1
-        # with open('./test.csv', 'w' ,encoding='utf-8') as f:
-        #     f.write(str(soup))
+        with open('./test.csv', 'w' ,encoding='utf-8') as f:
+            f.write(str(soup))
         title = title.string
+        print(title)
+        print(soup.head.find_all('script'))
         if '综艺' in title:
             results = soup.find_all('a', class_="stageNum")
             episodes = self.get_video_variety(video_url, soup, p_status)

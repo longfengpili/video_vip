@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:53:49
-@LastEditTime: 2019-09-21 18:38:18
+@LastEditTime: 2019-09-24 08:02:41
 @github: https://github.com/longfengpili
 '''
 
@@ -28,9 +28,9 @@ class tasktest(unittest.TestCase):
         print(episodes)
 
     def test_iqiyi_video(self):
-        video_url = 'http://www.iqiyi.com/a_19rrhcoc51.html'
+        video_url = 'https://www.iqiyi.com/a_19rrhzs3ed.html'
         iqy = Iqiyi(headers=headers_video, api_id=0)
-        soup = iqy.get_video(video_url)
+        soup = iqy.get_video(video_url, p_status=True)
         # print(soup)
 
     def test_iqiyi_more(self):
