@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-22 08:11:32
+ * @LastEditTime: 2019-09-26 07:46:34
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -17,6 +17,9 @@
     <meta charset="UTF-8">
     {% block title %}
     <title>{{title}}</title>
+    {% endblock %}
+    {% block style %}
+    {{ super() }}
     {% endblock %}
 </head>
 
@@ -46,7 +49,7 @@
 
             {% for episode in episodes %}
             <tr>
-                <td align="center">{{episode.title}}</td>
+                <td align="center"><a>{{episode.title}}</a></td>
                 <td align="center"><a
                         href="{{url_for('admin.show', url=episode.url, src=episode.src, api_id=episode.api_id, title=episode.title)}}"><img
                             border="0" src="{{ url_for('static',filename='admin/images/play.png')}}" alt="play"
