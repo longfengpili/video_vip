@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-25 07:50:01
+@LastEditTime: 2019-09-27 07:58:45
 @github: https://github.com/longfengpili
 '''
 
@@ -25,13 +25,14 @@ class Iqiyi(GetResponseBase):
         self.search = search
         self.api_id = api_id
         self.url = f'https://so.iqiyi.com/so/q_{search}'
-        super(Iqiyi, self).__init__(self.url, headers)
+        self.headers = headers
+        super(Iqiyi, self).__init__(self.url, self.headers)
 
     def get_html_from_iqiyi(self):
         soup = self.get_response_soup()
         return soup
 
-    def get_search(self):
+    def get_search(self, first=False):
         soup = self.get_html_from_iqiyi()
         title = soup.title
         while not title or '404' in title.string:
@@ -50,9 +51,13 @@ class Iqiyi(GetResponseBase):
                 if search_result not in search_results and '<em' in str(result):
                     iqylogger.info(search_result)
                     search_results.append(search_result)
+                if first:
+                    break
         return title, search_results
     
-    def url_api(self, url, api_id):
+    def url_api(self, url, api_id=None):
+        if not api_id:
+            api_id = self.api_id
         for id, api in enumerate(api_urls):
             if id == int(api_id):
                 url_api = api + url
@@ -86,11 +91,9 @@ class Iqiyi(GetResponseBase):
                 # iqylogger.info(date)
                 url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
                 iqylogger.info(url)
-                headers= {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0'
-                }
-                response = self.get_response_soup(headers=headers, url=url)
+                response = self.get_response_soup(headers=self.headers, url=url)
                 if response:
+                    print(response)
                     response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
                     response_json = json.loads(response)
                     try:
@@ -143,11 +146,19 @@ class Iqiyi(GetResponseBase):
                 episode['api_id'] = self.api_id
                 episode['title'] = result['title'] if 'title' in result else result.string if result.string else title
                 url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
-                episode['url'] = self.url_api(url, self.api_id)
+                episode['url'] = self.url_api(url)
                 if 'iqiyi.com' in episode['url'] and episode not in episodes:
                     iqylogger.info(episode)
                     episodes.append(episode)
         return title, episodes
+
+    def get_video_info(self, url=None):
+        if not url:
+            url = self.search
+        response = self.get_response_soup(headers=self.headers, url=url)
+        title = response.title.string
+        url = self.url_api(url)
+        return title, url
 
 
 

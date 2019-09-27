@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-22 07:26:15
+@LastEditTime: 2019-09-27 07:43:07
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -15,7 +15,7 @@ import os
 import random
 import requests
 from bs4 import BeautifulSoup
-from config import headers_video, headers_search
+from config import headers_video, headers_search, headers_agent
 from api_urls import api_urls
 from .video import Iqiyi
 
@@ -53,8 +53,13 @@ def show():
 def search():
     search = request.args.get('search')
     api_id = request.args.get('api_id')
-    iqy = Iqiyi(headers_search, api_id=api_id, search=search)
-    title, search_results = iqy.get_search()
-    return render_template('admin/search.html', title=title, all_episode=search_results)
+    if re.search('www\..*?\.com', search):
+        iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
+        title, url = iqy.get_video_info()
+        return render_template('admin/show.html', title=title, video_url=url)
+    else:
+        iqy = Iqiyi(headers_search, api_id=api_id, search=search)
+        title, search_results = iqy.get_search()
+        return render_template('admin/search.html', title=title, all_episode=search_results)
 
 
