@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-10-08 07:23:45
+@LastEditTime: 2019-10-08 07:43:21
 @github: https://github.com/longfengpili
 '''
 
@@ -72,7 +72,7 @@ class Iqiyi(GetResponseBase):
             url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
             iqylogger.info(url)
             response = self.get_response_soup(headers=self.headers, url=url)
-            if response:
+            if response and '404' not in str(response):
                 print(response)
                 response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
                 response_json = json.loads(response)
@@ -115,7 +115,7 @@ class Iqiyi(GetResponseBase):
             except:
                 album_list = []
         iqylogger.info(f'source_id: {source_id}, album_list: {album_list}')
-        
+
         episodes = self.iqiyi_api(video_url, source_id, album_list, p_status=True)
                       
         return episodes

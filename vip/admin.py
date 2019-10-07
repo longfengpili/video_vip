@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-09-27 07:43:07
+@LastEditTime: 2019-10-08 07:36:32
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -25,8 +25,7 @@ admin = Blueprint('admin',__name__)
 @admin.route('/')
 @admin.route('/index')
 def index():
-    return render_template('admin/index.html')
-
+    return render_template('admin/index.html', api_count=list(range(len(api_urls))))
 
 @admin.route('show/', methods=['GET'])
 def show():
@@ -45,9 +44,9 @@ def show():
         title = title if title else title_
         if url == src: #首次search 不显示
             url = None
-        return render_template('admin/show.html', title=title, episodes=episodes, video_url=url)
+        return render_template('admin/show.html', title=title, episodes=episodes, video_url=url, api_count=list(range(len(api_urls))))
     else:
-        return redirect(url_for('admin.search',search=search, api_id=api_id))
+        return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(range(len(api_urls)))))
 
 @admin.route('search/', methods=['GET'])
 def search():
@@ -56,10 +55,10 @@ def search():
     if re.search('www\..*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
-        return render_template('admin/show.html', title=title, video_url=url)
+        return render_template('admin/show.html', title=title, video_url=url, api_count=list(range(len(api_urls))))
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
         title, search_results = iqy.get_search()
-        return render_template('admin/search.html', title=title, all_episode=search_results)
+        return render_template('admin/search.html', title=title, all_episode=search_results, api_count=list(range(len(api_urls))))
 
 

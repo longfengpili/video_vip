@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime: 2019-09-26 07:40:42
+ * @LastEditTime: 2019-10-08 07:39:26
  * @coding: 
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -53,10 +53,9 @@
 
             <input name="search" type="text" value='' placeholder='请填写查询的电视剧名称' style="height: 50px;width: 500px;">
             <select name="api_id" style="height: 50px;width: 50px;">
-                <option value="0">0</option>
-                <!-- <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3" selected='selected'>3</option> -->
+                {% for api in api_count %}
+                <option value="{{api}}">{{api}}</option>
+                {% endfor %}
             </select>
             <input type="submit" style="margin-top:20px;height: 50px;" />
         </form>
