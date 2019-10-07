@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-09-27 07:58:45
+@LastEditTime: 2019-10-08 07:23:45
 @github: https://github.com/longfengpili
 '''
 
@@ -63,6 +63,37 @@ class Iqiyi(GetResponseBase):
                 url_api = api + url
                 return url_api
 
+    def iqiyi_api(self, video_url, source_id, album_list, p_status=True):
+        episodes = []
+        if not source_id or not album_list:
+            return episodes
+
+        for date in album_list:
+            url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
+            iqylogger.info(url)
+            response = self.get_response_soup(headers=self.headers, url=url)
+            if response:
+                print(response)
+                response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
+                response_json = json.loads(response)
+                try:
+                    results = response_json['data'].get(date)
+                except Exception as e:
+                    iqylogger.info(f'pcw-api error :{response_json}')
+                    results = []
+                for result in results:
+                    episode = {}
+                    episode['src'] = video_url
+                    episode['api_id'] = self.api_id
+                    episode['title'] = result['shortTitle']
+                    url = result['playUrl']
+                    episode['url'] = self.url_api(url, self.api_id)
+                    if 'iqiyi.com' in episode['url'] and episode not in episodes:
+                        if p_status:
+                            iqylogger.info(episode)
+                        episodes.insert(0, episode)
+        return episodes
+
     def get_video_variety(self, video_url, soup, p_status):
         scripts = soup.head.find_all('script')
         script = ''.join([script.string.replace('\n', '').replace(' ', '') for script in scripts if script.string])
@@ -85,33 +116,8 @@ class Iqiyi(GetResponseBase):
                 album_list = []
         iqylogger.info(f'source_id: {source_id}, album_list: {album_list}')
         
-        episodes = []
-        if source_id and album_list:
-            for date in album_list:
-                # iqylogger.info(date)
-                url = f'http://pcw-api.iqiyi.com/album/source/svlistinfo?sourceid={source_id}&timelist={date}&callback=window.Q.__callbacks__.cbejn72o'
-                iqylogger.info(url)
-                response = self.get_response_soup(headers=self.headers, url=url)
-                if response:
-                    print(response)
-                    response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
-                    response_json = json.loads(response)
-                    try:
-                        results = response_json['data'].get(date)
-                    except Exception as e:
-                        iqylogger.info(f'pcw-api error :{response_json}')
-                        results = []
-                    for result in results:
-                        episode = {}
-                        episode['src'] = video_url
-                        episode['api_id'] = self.api_id
-                        episode['title'] = result['shortTitle']
-                        url = result['playUrl']
-                        episode['url'] = self.url_api(url, self.api_id)
-                        if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                            if p_status:
-                                iqylogger.info(episode)
-                            episodes.insert(0, episode)
+        episodes = self.iqiyi_api(video_url, source_id, album_list, p_status=True)
+                      
         return episodes
 
     def get_video(self, video_url, p_status):
