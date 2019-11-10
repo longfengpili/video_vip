@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-10-13 19:59:42
+@LastEditTime: 2019-11-11 07:46:16
 @github: https://github.com/longfengpili
 '''
 
@@ -30,6 +30,8 @@ class Iqiyi(GetResponseBase):
 
     def get_html_from_iqiyi(self):
         soup = self.get_response_soup()
+        # with open('./test.csv', 'w' ,encoding='utf-8') as f:
+        #     f.write(str(soup))
         return soup
 
     def get_search(self, first=False):
@@ -39,7 +41,7 @@ class Iqiyi(GetResponseBase):
             soup = self.get_html_from_iqiyi()
             title = soup.title
         title = title.string
-        results = soup.find_all('h3', class_="result_title")
+        results = soup.find_all('h3', class_="qy-search-result-tit")
         search_results = []
         for result in results:
             search_result = {}

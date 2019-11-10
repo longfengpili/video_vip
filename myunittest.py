@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:53:49
-@LastEditTime: 2019-09-27 07:33:19
+@LastEditTime: 2019-11-11 07:47:50
 @github: https://github.com/longfengpili
 '''
 
@@ -26,7 +26,7 @@ class tasktest(unittest.TestCase):
             f.write(str(string))
 
     def test_iqiyi_search(self):
-        search = '坑王'
+        search = '废柴'
         iqy = Iqiyi(headers=headers_search, search=search, api_id=0)
         episodes = iqy.get_search()
         print(episodes)
@@ -38,14 +38,14 @@ class tasktest(unittest.TestCase):
         # print(soup)
 
     def test_iqiyi_more(self):
-        search = '坑王'
+        search = '废柴'
         iqy = Iqiyi(headers=headers_search, search=search, api_id=0)
         episodes = iqy.get_search()
         # print(episodes[1])
         for episode in episodes[1]:
             video_url = episode['url']
             iqy = Iqiyi(headers=headers_video, api_id=0)
-            soup = iqy.get_video(video_url)
+            soup = iqy.get_video(video_url, p_status=True)
             print(soup)
 
     def test_iqiyi_get_video_info(self):
@@ -64,6 +64,6 @@ class tasktest(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     suite = unittest.TestSuite()  # 创建测试套件
-    suite.addTest(tasktest('test_iqiyi_get_video_info'))
+    suite.addTest(tasktest('test_iqiyi_more'))
     runner = unittest.TextTestRunner()
     runner.run(suite)
