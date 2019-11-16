@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-11-11 07:46:16
+@LastEditTime: 2019-11-16 17:59:26
 @github: https://github.com/longfengpili
 '''
 
@@ -156,7 +156,7 @@ class Iqiyi(GetResponseBase):
                 url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
                 episode['url'] = self.url_api(url)
                 if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                    iqylogger.info(episode)
+                    # iqylogger.info(episode)
                     episodes.append(episode)
         return title, episodes
 

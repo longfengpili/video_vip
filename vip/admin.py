@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-10-08 07:36:32
+@LastEditTime: 2019-11-16 18:34:43
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -27,6 +27,18 @@ admin = Blueprint('admin',__name__)
 def index():
     return render_template('admin/index.html', api_count=list(range(len(api_urls))))
 
+def get_video_url_before_after(video_url, episodes):
+    video_url_before = None
+    video_url_after = None
+    for ix, episode in enumerate(episodes):
+        url = episode.get('url')
+        if url == video_url:
+            if ix > 0:
+                video_url_before = episodes[ix-1]
+            if ix < len(episodes):
+                video_url_after = episodes[ix+1]
+    return video_url_before, video_url_after
+
 @admin.route('show/', methods=['GET'])
 def show():
     # print(request.headers)
@@ -44,7 +56,8 @@ def show():
         title = title if title else title_
         if url == src: #首次search 不显示
             url = None
-        return render_template('admin/show.html', title=title, episodes=episodes, video_url=url, api_count=list(range(len(api_urls))))
+        video_url_before, video_url_after = get_video_url_before_after(url, episodes)
+        return render_template('admin/show.html', title=title, episodes=episodes, video_url=url, video_url_before=video_url_before, video_url_after= video_url_after, api_count=list(range(len(api_urls))))
     else:
         return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(range(len(api_urls)))))
 
