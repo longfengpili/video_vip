@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime: 2019-11-16 17:59:26
+@LastEditTime: 2019-11-19 06:55:50
 @github: https://github.com/longfengpili
 '''
 
@@ -75,7 +75,7 @@ class Iqiyi(GetResponseBase):
             iqylogger.info(url)
             response = self.get_response_soup(headers=self.headers, url=url)
             if response and '请求失败,请重试' not in str(response):
-                print(response)
+                # print(response)
                 response = re.search('cbejn72o\((.*?)\);}catch', str(response)).group(1)
                 response_json = json.loads(response)
                 try:

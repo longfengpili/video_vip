@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-11-18 15:46:56
+@LastEditTime: 2019-11-19 06:51:25
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -35,7 +35,7 @@ def get_video_url_before_after(video_url, episodes):
         if url == video_url:
             if ix > 0:
                 video_url_before = episodes[ix-1]
-            if ix < len(episodes):
+            if ix < len(episodes)-1:
                 video_url_after = episodes[ix+1]
     return video_url_before, video_url_after
 
@@ -56,10 +56,7 @@ def show():
         title = title if title else title_
         if url == src: #首次search 不显示
             url = None
-        try:
-            video_url_before, video_url_after = get_video_url_before_after(url, episodes)
-        except:
-            video_url_before, video_url_after = None, None
+        video_url_before, video_url_after = get_video_url_before_after(url, episodes)
         return render_template('admin/show.html', title=title, episodes=episodes, video_url=url, video_url_before=video_url_before, video_url_after= video_url_after, api_count=list(range(len(api_urls))))
     else:
         return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(range(len(api_urls)))))
