@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-11-16 18:34:43
+@LastEditTime: 2019-11-18 15:43:28
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -50,7 +50,7 @@ def show():
     search = request.args.get('search')
     src = src if src else url
     print(f'【url】: {url}, 【src】:{src}, 【api_id】:{api_id}')
-    if url and re.search('www\..*?\.com', url):
+    if url:
         iqy = Iqiyi(headers=headers_video, api_id=api_id)
         title_, episodes = iqy.get_video(src, p_status)
         title = title if title else title_
