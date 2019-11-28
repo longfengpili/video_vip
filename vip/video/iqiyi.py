@@ -81,7 +81,7 @@ class Iqiyi(GetResponseBase):
                 try:
                     results = response_json['data'].get(date)
                 except Exception as e:
-                    iqylogger.info(f'pcw-api error :{response_json}')
+                    iqylogger.error(f'pcw-api error :{response_json}')
                     results = []
                 for result in results:
                     episode = {}
@@ -92,7 +92,7 @@ class Iqiyi(GetResponseBase):
                     episode['url'] = self.url_api(url, self.api_id)
                     if 'iqiyi.com' in episode['url'] and episode not in episodes:
                         if p_status:
-                            iqylogger.info(episode)
+                            # iqylogger.info(episode)
                         episodes.insert(0, episode)
         return episodes
 
@@ -116,7 +116,7 @@ class Iqiyi(GetResponseBase):
                 album_list = [str(year) for year in range(int(date_upload), int(date_published)+1, 1)]
             except:
                 album_list = []
-        iqylogger.info(f'source_id: {source_id}, album_list: {album_list}')
+        # iqylogger.info(f'source_id: {source_id}, album_list: {album_list}')
 
         episodes = self.iqiyi_api(video_url, source_id, album_list, p_status=True)
                       
@@ -134,7 +134,7 @@ class Iqiyi(GetResponseBase):
         with open('./test.csv', 'w' ,encoding='utf-8') as f:
             f.write(str(soup))
         title = title.string
-        iqylogger.info(title)
+        # iqylogger.info(title)
         if '综艺' in title:
             results = soup.find_all('a', class_="stageNum")
             episodes = self.get_video_variety(video_url, soup, p_status)
