@@ -93,6 +93,7 @@ class Iqiyi(GetResponseBase):
                     if 'iqiyi.com' in episode['url'] and episode not in episodes:
                         if p_status:
                             # iqylogger.info(episode)
+                            pass
                         episodes.insert(0, episode)
         return episodes
 
