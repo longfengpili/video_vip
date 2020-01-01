@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-01 18:56:26
+@LastEditTime : 2020-01-01 18:57:38
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -28,16 +28,24 @@ def index():
     return render_template('admin/index.html', api_count=list(range(len(api_urls))))
 
 def get_video_url_before_after(video_url, episodes):
+    videos = {}
     video_url_before = None
     video_url_after = None
     for ix, episode in enumerate(episodes):
         url = episode.get('url')
         if url == video_url:
+            videos['current'] = video_url
             if ix > 0:
                 video_url_before = episodes[ix-1]
+                video_url_before = url_for('admin.show', url=video_url_before.get('url'), api_id=video_url_before.get('api_id'), 
+                                                    src=video_url_before.get('src'), title=video_url_before.get('title'))
+                videos['before'] = video_url_before
             if ix < len(episodes)-1:
                 video_url_after = episodes[ix+1]
-    return video_url_before, video_url_after
+                video_url_after = url_for('admin.show', url=video_url_after.get('url'), api_id=video_url_after.get('api_id'), 
+                                                    src=video_url_after.get('src'), title=video_url_after.get('title'))
+                videos['after'] = video_url_after
+    return videos
 
 @admin.route('show/', methods=['GET'])
 def show():
@@ -56,8 +64,8 @@ def show():
         title = title if title else title_
         if url == src: #首次search 不显示
             url = None
-        video_url_before, video_url_after = get_video_url_before_after(url, episodes)
-        return render_template('admin/show.html', title=title, episodes=episodes, video_url=url, video_url_before=video_url_before, video_url_after= video_url_after, api_count=list(range(len(api_urls))))
+        videos = get_video_url_before_after(url, episodes)
+        return render_template('admin/show.html', title=title, episodes=episodes, videos=videos, api_count=list(range(len(api_urls))))
     else:
         return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(range(len(api_urls)))))
 
