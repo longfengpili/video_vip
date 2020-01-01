@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-01 18:57:38
+@LastEditTime : 2020-01-01 19:09:24
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -27,10 +27,13 @@ admin = Blueprint('admin',__name__)
 def index():
     return render_template('admin/index.html', api_count=list(range(len(api_urls))))
 
-def get_video_url_before_after(video_url, episodes):
+def get_video_url_before_after(video_url, episodes=None):
     videos = {}
     video_url_before = None
     video_url_after = None
+    if not episodes:
+        videos['current'] = video_url
+        return videos
     for ix, episode in enumerate(episodes):
         url = episode.get('url')
         if url == video_url:
@@ -76,8 +79,8 @@ def search():
     if re.search('^http.*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
-        # print(title, url)
-        return render_template('admin/show.html', title=title, video_url=url, api_count=list(range(len(api_urls))))
+        videos = get_video_url_before_after(url)
+        return render_template('admin/show.html', title=title, videos=videos, api_count=list(range(len(api_urls))))
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
         title, search_results = iqy.get_search()
