@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime: 2019-11-19 06:51:25
+@LastEditTime : 2020-01-01 18:56:26
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -65,9 +65,10 @@ def show():
 def search():
     search = request.args.get('search')
     api_id = request.args.get('api_id')
-    if re.search('www\..*?\.com', search):
+    if re.search('^http.*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
+        # print(title, url)
         return render_template('admin/show.html', title=title, video_url=url, api_count=list(range(len(api_urls))))
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
