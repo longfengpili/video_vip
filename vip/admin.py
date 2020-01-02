@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-01 19:09:24
+@LastEditTime : 2020-01-03 07:34:56
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -25,7 +25,7 @@ admin = Blueprint('admin',__name__)
 @admin.route('/')
 @admin.route('/index')
 def index():
-    return render_template('admin/index.html', api_count=list(range(len(api_urls))))
+    return render_template('admin/index.html', api_count=list(map(str, range(len(api_urls)))))
 
 def get_video_url_before_after(video_url, episodes=None):
     videos = {}
@@ -68,22 +68,23 @@ def show():
         if url == src: #首次search 不显示
             url = None
         videos = get_video_url_before_after(url, episodes)
-        return render_template('admin/show.html', title=title, episodes=episodes, videos=videos, api_count=list(range(len(api_urls))))
+        return render_template('admin/show.html', title=title, episodes=episodes, videos=videos, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
     else:
-        return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(range(len(api_urls)))))
+        return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(map(str, range(len(api_urls))))))
 
 @admin.route('search/', methods=['GET'])
 def search():
     search = request.args.get('search')
     api_id = request.args.get('api_id')
+    # print(search)
     if re.search('^http.*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
         videos = get_video_url_before_after(url)
-        return render_template('admin/show.html', title=title, videos=videos, api_count=list(range(len(api_urls))))
+        return render_template('admin/show.html', title=title, videos=videos, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
         title, search_results = iqy.get_search()
-        return render_template('admin/search.html', title=title, all_episode=search_results, api_count=list(range(len(api_urls))))
+        return render_template('admin/search.html', title=title, all_episode=search_results, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
 
 

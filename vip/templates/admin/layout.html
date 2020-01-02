@@ -1,7 +1,7 @@
 <!--
  * @Author: longfengpili
  * @Date: 2019-09-08 13:55:55
- * @LastEditTime : 2020-01-03 07:03:51
+ * @LastEditTime : 2020-01-03 07:32:19
  * @coding:
 * #!/usr/bin/env python
 * # -*- coding:utf-8 -*-
@@ -54,7 +54,11 @@
             <input name="search" type="text" value='' placeholder='请填写查询的电视剧名称' style="height: 50px;width: 500px;">
             <select name="api_id" style="height: 50px;width: 50px;">
                 {% for api in api_count %}
-                <option value="{{api}}">{{api}}</option>
+                    {% if api == api_id %}
+                        <option value="{{api}}" selected>{{api}}</option>
+                    {% else %}
+                        <option value="{{api}}" alt="{{api_id}}">{{api}}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             <input type="submit" style="margin-top:20px;height: 50px;" />
