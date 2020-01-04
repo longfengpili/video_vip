@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-03 07:34:56
+@LastEditTime : 2020-01-04 10:10:03
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -19,13 +19,21 @@ from config import headers_video, headers_search, headers_agent
 from api_urls import api_urls
 from .video import Iqiyi
 
+import logging
+from logging import config
+config.fileConfig('vip_log.conf')
+flask_logger = logging.getLogger('flask')
+
 admin = Blueprint('admin',__name__)
 
+
+def get_api_count():
+    return list(map(str, range(len(api_urls))))
 
 @admin.route('/')
 @admin.route('/index')
 def index():
-    return render_template('admin/index.html', api_count=list(map(str, range(len(api_urls)))))
+    return render_template('admin/index.html', api_count=get_api_count())
 
 def get_video_url_before_after(video_url, episodes=None):
     videos = {}
@@ -60,7 +68,7 @@ def show():
     api_id = request.args.get('api_id')
     search = request.args.get('search')
     src = src if src else url
-    print(f'【url】: {url}, 【src】:{src}, 【api_id】:{api_id}')
+    flask_logger.info(f'【search】: {search}, 【url】: {url}, 【src】:{src}, 【api_id】:{api_id}')
     if url:
         iqy = Iqiyi(headers=headers_video, api_id=api_id)
         title_, episodes = iqy.get_video(src, p_status)
@@ -68,23 +76,25 @@ def show():
         if url == src: #首次search 不显示
             url = None
         videos = get_video_url_before_after(url, episodes)
-        return render_template('admin/show.html', title=title, episodes=episodes, videos=videos, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
+        return render_template('admin/show.html', src=src, title=title, episodes=episodes, videos=videos, api_id=api_id, api_count=get_api_count())
     else:
-        return redirect(url_for('admin.search', search=search, api_id=api_id, api_count=list(map(str, range(len(api_urls))))))
+        return redirect(url_for('admin.search', src=search, search=search, api_id=api_id, api_count=get_api_count()))
 
 @admin.route('search/', methods=['GET'])
 def search():
     search = request.args.get('search')
     api_id = request.args.get('api_id')
+    # src = request.args.get('src')
     # print(search)
     if re.search('^http.*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
         videos = get_video_url_before_after(url)
-        return render_template('admin/show.html', title=title, videos=videos, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
+        flask_logger.info(videos)
+        return render_template('admin/show.html', src=search, title=title, videos=videos, api_id=api_id, api_count=get_api_count())
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
         title, search_results = iqy.get_search()
-        return render_template('admin/search.html', title=title, all_episode=search_results, api_id=api_id, api_count=list(map(str, range(len(api_urls)))))
+        return render_template('admin/search.html', src=search, title=title, all_episode=search_results, api_id=api_id, api_count=get_api_count())
 
 
