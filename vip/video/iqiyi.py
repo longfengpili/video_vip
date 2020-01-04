@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime : 2020-01-04 12:15:25
+@LastEditTime : 2020-01-04 12:25:51
 @github: https://github.com/longfengpili
 '''
 
@@ -135,13 +135,13 @@ class Iqiyi(GetResponseBase):
         with open('./test.csv', 'w' ,encoding='utf-8') as f:
             f.write(str(soup))
         title = title.string
-        if 'playpage-barrage-list' in str(soup): #根据是否有弹幕列表判断是否是内页
+        if 'playpage-barrage-list' in str(soup) or not re.search('iqiyi', video_url): #根据是否有弹幕列表判断是否是内页或者非iqiyi视频
             episode = {}
             episode['src'] = video_url
             episode['api_id'] = self.api_id
             episode['title'] = title
             episode['url'] = self.url_api(video_url)
-            episodes.append(episode)
+            episodes.append(episode)            
         else:
             # iqylogger.info(title)
             if '综艺' in title:
