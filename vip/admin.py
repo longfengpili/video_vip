@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-04 10:10:03
+@LastEditTime : 2020-01-04 10:31:13
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -69,6 +69,8 @@ def show():
     search = request.args.get('search')
     src = src if src else url
     flask_logger.info(f'【search】: {search}, 【url】: {url}, 【src】:{src}, 【api_id】:{api_id}')
+    if search:
+        return redirect(url_for('admin.search', src=search, search=search, api_id=api_id, api_count=get_api_count()))
     if url:
         iqy = Iqiyi(headers=headers_video, api_id=api_id)
         title_, episodes = iqy.get_video(src, p_status)
@@ -77,24 +79,27 @@ def show():
             url = None
         videos = get_video_url_before_after(url, episodes)
         return render_template('admin/show.html', src=src, title=title, episodes=episodes, videos=videos, api_id=api_id, api_count=get_api_count())
-    else:
-        return redirect(url_for('admin.search', src=search, search=search, api_id=api_id, api_count=get_api_count()))
 
 @admin.route('search/', methods=['GET'])
 def search():
     search = request.args.get('search')
     api_id = request.args.get('api_id')
-    # src = request.args.get('src')
-    # print(search)
+    src = request.args.get('src')
+    src = src if src else search
+    if search == src and re.search('^http.*?\.com', search):
+        iqy = Iqiyi(headers_search, api_id=api_id, search=search)
+        title, search_results = iqy.get_search()
+        return redirect(url_for('admin.show', src=search, url=search, api_id=api_id, api_count=get_api_count()))
+        
     if re.search('^http.*?\.com', search):
         iqy = Iqiyi(headers_agent, api_id=api_id, search=search)
         title, url = iqy.get_video_info()
         videos = get_video_url_before_after(url)
         flask_logger.info(videos)
-        return render_template('admin/show.html', src=search, title=title, videos=videos, api_id=api_id, api_count=get_api_count())
+        return render_template('admin/show.html', src=src, title=title, videos=videos, api_id=api_id, api_count=get_api_count())
     else:
         iqy = Iqiyi(headers_search, api_id=api_id, search=search)
         title, search_results = iqy.get_search()
-        return render_template('admin/search.html', src=search, title=title, all_episode=search_results, api_id=api_id, api_count=get_api_count())
+        return render_template('admin/search.html', src=src, title=title, all_episode=search_results, api_id=api_id, api_count=get_api_count())
 
 
