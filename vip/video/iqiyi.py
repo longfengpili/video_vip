@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime : 2020-01-04 11:59:15
+@LastEditTime : 2020-01-04 12:15:25
 @github: https://github.com/longfengpili
 '''
 
@@ -135,7 +135,7 @@ class Iqiyi(GetResponseBase):
         with open('./test.csv', 'w' ,encoding='utf-8') as f:
             f.write(str(soup))
         title = title.string
-        if 'playpage-barrage-list' in str(soup):
+        if 'playpage-barrage-list' in str(soup): #根据是否有弹幕列表判断是否是内页
             episode = {}
             episode['src'] = video_url
             episode['api_id'] = self.api_id
