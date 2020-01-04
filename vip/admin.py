@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-08 13:55:55
-@LastEditTime : 2020-01-04 12:08:26
+@LastEditTime : 2020-01-04 12:11:50
 @coding: 
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
@@ -56,7 +56,7 @@ def get_video_url_before_after(video_url, episodes=None):
                 video_url_after = url_for('admin.show', url=video_url_after.get('url'), api_id=video_url_after.get('api_id'), 
                                                     src=video_url_after.get('src'), title=video_url_after.get('title'))
                 videos['after'] = video_url_after
-    if not videos:
+    if not videos and len(episodes) == 1:
         videos['current'] = episodes[0].get('url')
     return videos
 
