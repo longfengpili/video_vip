@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:28:59
-@LastEditTime: 2019-09-21 18:05:51
+@LastEditTime : 2020-01-04 11:40:55
 @github: https://github.com/longfengpili
 '''
 
@@ -35,5 +35,7 @@ class GetResponseBase(object):
     def get_response_soup(self, headers=None, url=None):
         self.get_html(headers=headers, url=url)
         soup = self.soup_html()
+        with open('./test.csv', 'w' ,encoding='utf-8') as f:
+            f.write(self.html)
         return soup
     

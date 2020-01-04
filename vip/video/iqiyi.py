@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime : 2020-01-03 07:05:12
+@LastEditTime : 2020-01-04 11:59:15
 @github: https://github.com/longfengpili
 '''
 
@@ -127,38 +127,48 @@ class Iqiyi(GetResponseBase):
         k = 0
         episodes = []
         soup = self.get_response_soup(url=video_url)
-        title = soup.head.title
+        title = soup.head.title if soup and soup.find_all('head') else soup.title
         while (not title or '404' in title.string) and k <= 5:
             soup = self.get_response_soup(url=video_url)
-            title = soup.head.title
+            title = soup.head.title if soup and soup.find_all('head') else soup.title
             k += 1
         with open('./test.csv', 'w' ,encoding='utf-8') as f:
             f.write(str(soup))
         title = title.string
-        # iqylogger.info(title)
-        if '综艺' in title:
-            results = soup.find_all('a', class_="stageNum")
-            episodes = self.get_video_variety(video_url, soup, p_status)
-        elif '电影' in title:
-            results = soup.find_all('a', class_="albumPlayBtn") #电影
-        elif '电视剧' in title:
-            results = soup.find_all('a', class_="plotNum") #电视剧
-            episodes = self.get_video_variety(video_url, soup, p_status)
+        if 'playpage-barrage-list' in str(soup):
+            episode = {}
+            episode['src'] = video_url
+            episode['api_id'] = self.api_id
+            episode['title'] = title
+            episode['url'] = self.url_api(video_url)
+            episodes.append(episode)
         else:
-            results = [{'title': title, 'href': video_url}]
-            episodes = self.get_video_variety(video_url, soup, p_status)
-        if not episodes:
-            for result in results:
-                # iqylogger.info(result)
-                episode = {}
-                episode['src'] = video_url
-                episode['api_id'] = self.api_id
-                episode['title'] = result['title'] if 'title' in result else result.string if result.string else title
-                url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
-                episode['url'] = self.url_api(url)
-                if 'iqiyi.com' in episode['url'] and episode not in episodes:
-                    # iqylogger.info(episode)
-                    episodes.append(episode)
+            # iqylogger.info(title)
+            if '综艺' in title:
+                results = soup.find_all('a', class_="stageNum")
+                episodes = self.get_video_variety(video_url, soup, p_status)
+            elif '电影' in title:
+                results = soup.find_all('a', class_="albumPlayBtn") #电影
+            elif '电视剧' in title:
+                results = soup.find_all('a', class_="plotNum") #电视剧
+                episodes = self.get_video_variety(video_url, soup, p_status)
+            else:
+                results = [{'title': title, 'href': video_url}]
+                episodes = self.get_video_variety(video_url, soup, p_status)
+            if not episodes:
+                for result in results:
+                    # iqylogger.info(result)
+                    episode = {}
+                    episode['src'] = video_url
+                    episode['api_id'] = self.api_id
+                    episode['title'] = result['title'] if 'title' in result else result.string if result.string else title
+                    url = re.subn('.*?www', 'http://www', result['href'], 1)[0]
+                    episode['url'] = self.url_api(url)
+                    if 'iqiyi.com' in episode['url'] and episode not in episodes:
+                        # iqylogger.info(episode)
+                        episodes.append(episode)
+        iqylogger.info(title)
+        iqylogger.info(episodes)
         return title, episodes
 
     def get_video_info(self, url=None):
