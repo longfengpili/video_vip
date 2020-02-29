@@ -1,7 +1,7 @@
 '''
 @Author: longfengpili
 @Date: 2019-09-18 07:39:03
-@LastEditTime : 2020-01-04 12:25:51
+@LastEditTime: 2020-02-29 19:20:40
 @github: https://github.com/longfengpili
 '''
 
@@ -49,7 +49,9 @@ class Iqiyi(GetResponseBase):
                 search_result['src'] = self.url
                 search_result['api_id'] = self.api_id
                 search_result['title'] = result.a['title']
-                search_result['url'] = result.a['href']
+                url = result.a['href']
+                url = url if url.startswith('http') else 'http:' + url
+                search_result['url'] = url
                 if search_result not in search_results and '<em' in str(result):
                     iqylogger.info(search_result)
                     search_results.append(search_result)
